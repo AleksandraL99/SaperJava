@@ -26,7 +26,6 @@ public class Game extends JPanel implements MouseListener {
     private JButton retry_button;
     private Field[][] fields;
     private Settings settings;
-    private Settings settings_copy;
     private JLabel to_be_marked;
     private Prepare after_first_shoot;
     private Boolean first_shoot ;
@@ -41,7 +40,7 @@ public class Game extends JPanel implements MouseListener {
         this.window_height = settings.getHeight();
         this.window_width = settings.getWidth();
         this.bombs = settings.getBombs();
-        this.settings_copy = settings;
+        this.settings = settings;
         to_mark = bombs;
         first_shoot = true;
 
@@ -61,7 +60,7 @@ public class Game extends JPanel implements MouseListener {
         int game_window_width = window_height*CONSTANS.FIELD_SIZE+20;
         int game_window_height = window_width*CONSTANS.FIELD_SIZE+110;
 
-        window.setSize(game_window_width, game_window_height);
+        window.setSize(game_window_width+8, game_window_height+40);
 
         setBackground(CONSTANS.GREY);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -114,6 +113,7 @@ public class Game extends JPanel implements MouseListener {
         retry_button = new JButton();
         retry_button.setIcon(retry);
         retry_button.setBorder(BorderFactory.createEtchedBorder(0));
+        retry_button.addMouseListener(this);
         upper_left.add(retry_button);
 
 
@@ -130,7 +130,7 @@ public class Game extends JPanel implements MouseListener {
                 bt.setBorder(BorderFactory.createEtchedBorder(1));
                 test.add(bt);
 
-               // buttons[i][j] = bt;
+                field.setButton(bt);
                 field.setState(0);
                 fields[i][j] = field;
                 bt.addMouseListener(this);
@@ -147,41 +147,39 @@ public class Game extends JPanel implements MouseListener {
         int j = activeButton.getX() / CONSTANS.FIELD_SIZE;
         int i = activeButton.getY() / CONSTANS.FIELD_SIZE;
 
-
-
         //lewe kliknięcie
         if(e.getButton() == MouseEvent.BUTTON1) {
-            if(fields[i][j].getState() == 0) {
-                fields[i][j].setState(CONSTANS.INACTIVE);
-                activeButton.setIcon(null);
-                activeButton.setBackground(CONSTANS.DARK_GREY);
-                activeButton.setBorder(null);
-                activeButton.removeMouseListener(this);
+            if((Object) e.getSource() == retry_button)
+            {
+                setVisible(false);
+                window.add(new Menu(window));
             }
-            if(first_shoot) {
-                Prepare after_first_shoot = new Prepare();
-                fields = after_first_shoot.getRandomBombs(i, j, settings_copy, fields);
-                for(int q=0; q<window_width; q++) {
-                    for (int t = 0; t < window_height; t++) {
-                        System.out.print(fields[q][t].getValue()+" ");
+            else if(fields[i][j].getState() == CONSTANS.ACTIVE) {
+                if(first_shoot) {
+                    Prepare after_first_shoot = new Prepare();
+                    fields = after_first_shoot.getRandomBombs(i, j, settings, fields);
+                    for(int q=0; q<window_width; q++) {
+                        for (int t = 0; t < window_height; t++) {
+                            System.out.print(fields[q][t].getValue()+" ");
+                        }
+                        System.out.println(" ");
                     }
                     System.out.println(" ");
-                }
-                System.out.println(" ");
-                fields = after_first_shoot.countFields(settings_copy, fields);
-                for(int q=0; q<window_width; q++) {
-                    for (int t = 0; t < window_height; t++) {
-                        System.out.print(fields[q][t].getValue()+" ");
+                    fields = after_first_shoot.countFields(settings, fields);
+                    for(int q=0; q<window_width; q++) {
+                        for (int t = 0; t < window_height; t++) {
+                            System.out.print(fields[q][t].getValue()+" ");
+                        }
+                        System.out.println(" ");
                     }
-                    System.out.println(" ");
+                    first_shoot = false;
                 }
-                first_shoot = false;
+                if(fields[i][j].getValue() == 9) {
+                    setVisible(false);
+                    window.add(new LastWindow(window, settings));
+                }
+                unveiling(fields, i, j);
             }
-            int value = fields[i][j].getValue();
-            //System.out.println(activeButton.hashCode()+ " ");
-            String string_value = Integer.toString(value);
-            activeButton.setText(string_value);
-
         }
         //środkowe kliknięcie
         if(e.getButton() == MouseEvent.BUTTON2) {
@@ -216,55 +214,66 @@ public class Game extends JPanel implements MouseListener {
         }
     }
 
-    public Field[][] unveiling(Field[][] fields, int cor_1, int cor_2) {
-        /* if(fields[cor_1][cor_2].getValue() == CONSTANS.EMPTY && fields[cor_1][cor_2].getState() == CONSTANS.ACTIVE
-        {
-            fields[cor_1][cor_2].setState(CONSTANS.INACTIVE);
-            odslon.append((wsp_1, wsp_2))  #odsłoń
-            if wsp_1 != 0:  #jeśli to nie jest element w zerowym wierszu
-            #to idź rekurencyjnie do góry
-            odsloniecia(plansza, szerokosc, wysokosc, wsp_1 - 1, wsp_2, odslon)
-            if wsp_1 != wysokosc - 1:  #jeśli to nie ostatni wiersz
-            #to idź do dołu
-            odsloniecia(plansza, szerokosc, wysokosc, wsp_1 + 1, wsp_2, odslon)
-            if wsp_2 != 0:  #jeśli to nie zerowa kolumna
-            #to idź w lewo
-            odsloniecia(plansza, szerokosc, wysokosc, wsp_1, wsp_2 - 1, odslon)
-            if wsp_2 != szerokosc - 1:  #jeśli to nie ostatnia kolumna
-            #to idź w prawo
-            odsloniecia(plansza, szerokosc, wysokosc, wsp_1, wsp_2 + 1, odslon)
-    else:  #jeśli trafimy na komórkę z wartością lub już odsłoniętą
-            plansza[wsp_1][wsp_2].set_stan(ODSLONIETY)  #zmień stan na odsłonięty
-            odslon.append((wsp_1, wsp_2))  #odsłoń ją
-        #lewy górny róg
-            if (wsp_1 != 0 and wsp_2 !=szerokosc - 1 and
-            plansza[wsp_1][wsp_2 + 1].wartosc == PUSTY and
-            plansza[wsp_1 - 1][wsp_2].wartosc != PUSTY and
-            plansza[wsp_1][wsp_2 + 1].stan == ODSLONIETY):
-            plansza[wsp_1 - 1][wsp_2].set_stan(1)  #ustaw stan 1
-            odslon.append((wsp_1 - 1, wsp_2))
-        #prawy dolny róg
-            if (wsp_1 != wysokosc - 1 and wsp_2 !=0 and
-            plansza[wsp_1][wsp_2 - 1].wartosc == PUSTY and
-            plansza[wsp_1 + 1][wsp_2].wartosc != PUSTY and
-            plansza[wsp_1][wsp_2 - 1].stan == ODSLONIETY):
-            plansza[wsp_1 + 1][wsp_2].set_stan(ODSLONIETY)
-            odslon.append((wsp_1 + 1, wsp_2))
-        #lewy dolny róg
-            if (wsp_1 != wysokosc - 1 and wsp_2 !=szerokosc - 1 and
-            plansza[wsp_1][wsp_2 + 1].wartosc == PUSTY and
-            plansza[wsp_1 + 1][wsp_2].wartosc != PUSTY and
-            plansza[wsp_1][wsp_2 + 1].stan == ODSLONIETY):
-            plansza[wsp_1 + 1][wsp_2].set_stan(ODSLONIETY)
-            odslon.append((wsp_1 + 1, wsp_2))
-        #prawy górny róg
-            if (wsp_1 != 0 and wsp_2 !=0 and plansza[ wsp_1][wsp_2 - 1].wartosc == PUSTY and
-            plansza[wsp_1 - 1][wsp_2].wartosc != PUSTY and
-            plansza[wsp_1][wsp_2 - 1].stan == ODSLONIETY):
-            plansza[wsp_1 - 1][wsp_2].set_stan(ODSLONIETY)
-            odslon.append((wsp_1 - 1, wsp_2))
-        }*/
-        return fields;
+    public void unveiling(Field[][] fields, int cor_1, int cor_2) {
+        JButton bt = new JButton();
+        bt= fields[cor_1][cor_2].getButton();
+        fields[cor_1][cor_2].setState(CONSTANS.INACTIVE);
+        changeButton(bt);
+        color(fields, cor_1, cor_2, bt);
+        if(fields[cor_1][cor_2].getValue() == CONSTANS.EMPTY) {
+            System.out.println(cor_1+" "+cor_2);
+            if(cor_1 != 0 && fields[cor_1-1][cor_2].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1-1, cor_2);
+            if(cor_2 != 0 && fields[cor_1][cor_2-1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1, cor_2-1);
+            if(cor_1 != window_width-1 && fields[cor_1+1][cor_2].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1+1, cor_2);
+            if(cor_2 != window_height-1 && fields[cor_1][cor_2+1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1, cor_2+1);
+            if(cor_1 != window_width-1 && cor_2 != window_height-1 && fields[cor_1+1][cor_2+1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1+1, cor_2+1);
+            if(cor_1 != 0 && cor_2 != 0 && fields[cor_1-1][cor_2-1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1-1, cor_2-1);
+            if(cor_1 != 0 && cor_2 != window_height-1 && fields[cor_1-1][cor_2+1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1-1, cor_2+1);
+            if(cor_1 != window_width-1 && cor_2 != 0 && fields[cor_1+1][cor_2-1].getState() == CONSTANS.ACTIVE)
+                unveiling(fields, cor_1+1, cor_2-1);
+        }
+    }
+
+    private void changeButton(JButton bt) {
+        bt.setIcon(null);
+        bt.setBackground(CONSTANS.DARK_GREY);
+        bt.setBorder(null);
+        bt.removeMouseListener(this);
+    }
+
+    private void color(Field[][] fields, int i, int j, JButton bt){
+        int value = fields[i][j].getValue();
+        String string_value = Integer.toString(value);
+        bt.setText(string_value);
+        if(value == 0)
+            bt.setText("");
+        else if(value == 1)
+            bt.setForeground(new Color(0,0,204));
+        else if(value == 2)
+            bt.setForeground(new Color(0,153,0));
+        else if(value == 3)
+            bt.setForeground(new Color(255,0,0));
+        else if(value == 4)
+            bt.setForeground(new Color(0,51,102));
+        else if(value == 5)
+            bt.setForeground(new Color(102,0,0));
+        else if(value == 6)
+            bt.setForeground(new Color(245,0,87));
+        else if(value == 7)
+            bt.setForeground(new Color(170,0,255));
+        else if(value == 8)
+            bt.setForeground(new Color(118,255,3));
+    }
+
+    private void endConditions(Field[][] fields){
+
     }
 
     @Override

@@ -24,6 +24,7 @@ public class Menu extends JPanel implements ActionListener {
         JLabel label3;
 
         JPanel free_field;
+        window.setSize(CONSTANS.MENU_WIDTH,CONSTANS.MENU_HEIGHT);
 
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
         free_field = new JPanel();
