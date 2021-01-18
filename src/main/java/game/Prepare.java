@@ -1,3 +1,10 @@
+package game;
+
+import external_elements.CONSTANS;
+import external_elements.Field;
+import external_elements.Settings;
+
+import java.util.Arrays;
 import java.util.Random;
 
 public class Prepare {
@@ -6,10 +13,14 @@ public class Prepare {
     private int window_width;
     private int bombs;
 
-    public Field[][] getRandomBombs(int coordinate_1, int coordinate_2, Settings settings, Field[][] fields) {
+    public Prepare(Settings settings) {
         this.window_height = settings.getHeight();
         this.window_width = settings.getWidth();
         this.bombs = settings.getBombs();
+    }
+
+    public Field[][] getRandomBombs(int coordinate_1, int coordinate_2, Field[][] fields) {
+
 
         int shot;
         int range;
@@ -20,27 +31,29 @@ public class Prepare {
         int bombs_table[] = new int[bombs];
         Random generator = new Random();
 
-        shot = coordinate_1 * settings.getWidth() + coordinate_2;
+        shot = coordinate_2 * window_width + coordinate_1;
 
-
-        for (int i = 0; i < bombs; i++) {
+        bombs_table[0] = generator.nextInt(range);
+        boolean state = false;
+        for (int i = 1; i < bombs; i++){
             int rand = generator.nextInt(range);
-            if (i == 0) {
-                bombs_table[i] = rand;
-            }
+            state = true;
             for (int j = 0; j < i; j++) {
-                if (bombs_table[j] != rand && shot != rand) {
-                    bombs_table[i] = rand;
-                } else {
-                    i--;
+                if(bombs_table[j]==rand || shot == rand){
+                    state = false;
                 }
             }
+            if(state){
+                bombs_table[i] = rand;
+            }else{
+                i--;
+            }
         }
-        System.out.println(" ");
+        Arrays.sort(bombs_table);
         for (int i = 0; i < bombs; i++) {
             System.out.print(bombs_table[i] + " ");
             coordinate = bombs_table[i];
-            row = coordinate / window_width;
+            row = (Integer) (coordinate / window_width);
             column = coordinate - row * window_width;
             fields[column][row].setValue(9);
         }
@@ -49,8 +62,9 @@ public class Prepare {
         return fields;
     }
 
-    public Field[][] countFields(Settings settings, Field[][] fields) {
+    public Field[][] countFields(Field[][] fields) {
         int number_of_bombs = 0;
+
         for (int i = 0; i < window_width; i++)
             for (int j = 0; j < window_height; j++) {
                 number_of_bombs = 0;

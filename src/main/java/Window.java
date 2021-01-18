@@ -1,3 +1,6 @@
+import external_elements.CONSTANS;
+import game.Menu;
+
 import javax.swing.*;
 
 public class Window extends JFrame {

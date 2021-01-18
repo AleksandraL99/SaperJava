@@ -1,3 +1,8 @@
+package game;
+
+import external_elements.CONSTANS;
+import external_elements.Settings;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,6 +29,7 @@ public class Menu extends JPanel implements ActionListener {
         JLabel label3;
 
         JPanel free_field;
+        window.setSize(CONSTANS.MENU_WIDTH,CONSTANS.MENU_HEIGHT);
 
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
         free_field = new JPanel();
@@ -38,26 +44,26 @@ public class Menu extends JPanel implements ActionListener {
         chosen_field.setBackground(new Color(192, 192, 192));
         add(chosen_field);
 
-        label1 = new JLabel("Szerokosc", JLabel.CENTER);
+        label1 = new JLabel("Width", JLabel.CENTER);
         label1.setFont(CONSTANS.CALIBRI20);
 
-        label2 = new JLabel("Wysokosc", JLabel.CENTER);
+        label2 = new JLabel("Height", JLabel.CENTER);
         label2.setFont(CONSTANS.CALIBRI20);
 
-        label3 = new JLabel("Ilosc Bomb", JLabel.CENTER);
+        label3 = new JLabel("Number of bombs", JLabel.CENTER);
         label3.setFont(CONSTANS.CALIBRI20);
 
-        field_height = new JComboBox();  //panel wyboru
+        field_height = new JComboBox();
         field_width = new JComboBox();
         field_bombs = new JComboBox();
 
-        for (int i = 10; i < 21; i++) {  //dodanie elementów do niego
+        for (int i = 10; i < 21; i++) {
             field_height.addItem(i);
             field_width.addItem(i);
         }
         field_height.addActionListener(this);
         field_width.addActionListener(this);
-        for (int i = 30; i < 71; i++) {  //dodanie elementów do niego
+        for (int i = 30; i < 71; i++) {
             field_bombs.addItem(i);
         }
 
@@ -103,15 +109,15 @@ public class Menu extends JPanel implements ActionListener {
         lowerColumn.add(lowerRow);
 
 
-        next = new JButton("Zatwierdz");
+        next = new JButton("Okey");
         next.setPreferredSize((new Dimension(CONSTANS.COMBOBOX_WIDTH,CONSTANS.COMBOBOX_HEIGHT)));
         next.setMaximumSize(new Dimension(CONSTANS.COMBOBOX_WIDTH,CONSTANS.COMBOBOX_HEIGHT));
         next.setBackground(CONSTANS.DARK_GREY);
         next.setFont(CONSTANS.CALIBRI20);
-        next.setFocusable(false);//fokus na blok - jeśli wcisniesz enter to uruchomi się akcja powiązana z tym blokiem, ta funckja wyłacza fokus
+        next.setFocusable(false);
         lowerRow.add(next);
 
-        next.addActionListener(this);//dodanie obsługi przycisku(do funckji actionPerformed)
+        next.addActionListener(this);
     }
 
     @Override
@@ -132,7 +138,7 @@ public class Menu extends JPanel implements ActionListener {
             bombs_max = (Integer) 7 * bombs_sum / 10;
             bombs_min = (Integer) 3 * bombs_sum / 10;
             field_bombs.removeAllItems();
-            for (int i = bombs_min; i < bombs_max+1; i++) {  //dodanie elementów do niego
+            for (int i = bombs_min; i < bombs_max+1; i++) {
                 field_bombs.addItem(i);
             }
         }

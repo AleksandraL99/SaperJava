@@ -1,3 +1,5 @@
+package external_elements;
+
 public class Settings {
     private int bombs;
     private int height;
