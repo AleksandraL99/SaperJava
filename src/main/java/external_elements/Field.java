@@ -7,9 +7,6 @@ public class Field {
     private int state;
     private JButton button;
 
-    public Field() {
-    }
-
     public JButton getButton() {
         return button;
     }
