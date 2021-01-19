@@ -142,7 +142,5 @@ public class Menu extends JPanel implements ActionListener {
                 field_bombs.addItem(i);
             }
         }
-
-
     }
 }

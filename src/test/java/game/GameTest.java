@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class GameTest {
 
@@ -44,12 +43,11 @@ public class GameTest {
 
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    System.out.println(fields[i][j].getState());
+                    System.out.print(fields[i][j].getState());
                     if(fields[i][j].getState()==CONSTANS.INACTIVE)
                         counter++;
                 }
             }
         Assert.assertEquals(6, counter);
     }
-
 }

@@ -13,14 +13,8 @@ public class LastWindow extends JPanel implements ActionListener  {
     private int window_height;
     private int window_width;
 
-    private JPanel labelPanel;
-    private JPanel buttonPanel;
-    private JPanel freePanel;
-    private JPanel panel;
-
     private JButton retry;
     private JButton close;
-    private JLabel label;
 
     public LastWindow(JFrame window, Settings settings, int status) {
         this.window = window;
@@ -70,7 +64,7 @@ public class LastWindow extends JPanel implements ActionListener  {
         retry.setMaximumSize(new Dimension(CONSTANS.COMBOBOX_WIDTH,CONSTANS.COMBOBOX_HEIGHT));
         retry.setBackground(CONSTANS.DARK_GREY);
         retry.setFont(CONSTANS.CALIBRI20);
-        retry.setFocusable(false);//fokus na blok - jeśli wcisniesz enter to uruchomi się akcja powiązana z tym blokiem, ta funckja wyłacza fokus
+        retry.setFocusable(false);
         buttonPanel.add(retry);
         retry.addActionListener(this);
 

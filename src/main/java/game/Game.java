@@ -32,12 +32,10 @@ public class Game extends JPanel implements MouseListener {
     private Field[][] fields;
     private Settings settings;
     private JLabel to_be_marked;
-    private Prepare after_first_shoot;
     private Boolean first_shoot ;
 
     private ImageIcon flag;
     private ImageIcon question_mark;
-    private ImageIcon bomb;
     private ImageIcon retry;
 
     public Game(JFrame window, Settings settings) {
@@ -53,16 +51,13 @@ public class Game extends JPanel implements MouseListener {
         try {
             flag = new ImageIcon( ImageIO.read(getClass().getResource("/flag.jpg")));
             question_mark = new ImageIcon( ImageIO.read(getClass().getResource("/question_mark.jpg")));
-            bomb = new ImageIcon( ImageIO.read(getClass().getResource("/bomb.jpg")));
             retry = new ImageIcon( ImageIO.read(getClass().getResource("/retry.jpg")));
 
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
 
-      //  this.buttons = new JButton[window_width][window_height];
         this.fields = new Field[window_width][window_height];
-//TODO zmienić szerokość żeby nie wcinało
         int game_window_width = window_height* CONSTANS.FIELD_SIZE+20;
         int game_window_height = window_width*CONSTANS.FIELD_SIZE+110;
 
@@ -129,7 +124,7 @@ public class Game extends JPanel implements MouseListener {
             for (int j = 0; j < window_height; j++) {
                 bt = new JButton("");
                 field = new Field();
-                bt.setFont(CONSTANS.CALIBRI15); //nazwa, typ, rozmiar czcionki
+                bt.setFont(CONSTANS.CALIBRI15);
                 bt.setPreferredSize(new Dimension(CONSTANS.FIELD_SIZE, CONSTANS.FIELD_SIZE));
                 bt.setMaximumSize(new Dimension(CONSTANS.FIELD_SIZE, CONSTANS.FIELD_SIZE));
                 bt.setBackground(CONSTANS.GREY);
@@ -153,7 +148,6 @@ public class Game extends JPanel implements MouseListener {
         int j = activeButton.getX() / CONSTANS.FIELD_SIZE;
         int i = activeButton.getY() / CONSTANS.FIELD_SIZE;
 
-        //lewe kliknięcie
         if(e.getButton() == MouseEvent.BUTTON1) {
             if((Object) e.getSource() == retry_button)
             {
@@ -181,7 +175,6 @@ public class Game extends JPanel implements MouseListener {
                 endConditions(fields);
             }
         }
-        //prawe kliknięcie
         if(e.getButton() == MouseEvent.BUTTON3) {
             if(fields[i][j].getState() == CONSTANS.FLAG) {
                 fields[i][j].setState(CONSTANS.QUESTION_MARK);
